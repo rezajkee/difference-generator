@@ -14,3 +14,7 @@ lint: # запуск линтера (flake8)
 
 test: # запуск pytest
 	poetry run pytest
+
+
+test-coverage: # проверка покрытия тестами
+	poetry run pytest --cov=gendiff tests/ --cov-report xml
