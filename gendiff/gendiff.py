@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-import json
+from gendiff.parser import parse
 
 
-def bool_to_json_format(string):
+def upper_to_lower_format(string):
     if string.find(": False"):
         string = string.replace(": False", ": false")
     if string.find(": True"):
@@ -14,8 +14,8 @@ def bool_to_json_format(string):
 
 
 def generate_diff(file1path, file2path):  # noqa: C901
-    file1 = json.load(open(file1path))
-    file2 = json.load(open(file2path))
+    file1 = parse(file1path)
+    file2 = parse(file2path)
 
     deltas_in_first = {i: file1[i] for i in file1
                        if i in file2 and file1[i] != file2[i]}
@@ -49,4 +49,4 @@ def generate_diff(file1path, file2path):  # noqa: C901
         if i in added:
             result += '  + {}: {}\n'.format(i, added[i])
     result += '}'
-    return(bool_to_json_format(result))
+    return(upper_to_lower_format(result))
