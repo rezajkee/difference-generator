@@ -9,5 +9,5 @@ def test_generate():
     file1path = 'tests/fixtures/file1.json'
     file2path = 'tests/fixtures/file2.json'
     diff = generate_diff(file1path, file2path)
-    result = read_text_file('tests/fixtures/result_flat_json.txt')
+    result = read_text_file('tests/fixtures/result_plain_json.txt')
     assert diff == result

@@ -5,7 +5,7 @@ import yaml
 
 
 def parse(path):
-    if path.endswith('.json'):
+    if path.endswith(('.json', '.JSON')):
         return json.load(open(path))
-    if path.endswith('.yaml') or path.endswith('.yml'):
+    if path.endswith(('.yaml', '.yml', '.YML')):
         return yaml.safe_load(open(path))
