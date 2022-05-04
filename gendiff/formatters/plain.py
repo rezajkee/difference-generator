@@ -48,5 +48,8 @@ def format_value(value):
 
     if isinstance(value, dict):
         return "[complex value]"
+    
+    if value == 0:
+        return "0"
 
     return "'{}'".format(value)
