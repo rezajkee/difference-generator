@@ -3,7 +3,7 @@ def plain(source, path=[], depth=1, first_lvl_keys=None):
         first_lvl_keys = list(source.keys())
     result = []
 
-    for key, (type, *values) in sorted(source.items()):
+    for key, (type, *values) in source.items():
         path.append(key)
         if type == "nested":
             result.append(plain(values[0], path, depth + 1, first_lvl_keys))

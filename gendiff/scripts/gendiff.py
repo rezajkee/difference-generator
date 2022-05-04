@@ -2,8 +2,6 @@
 
 import argparse
 from gendiff.gendiff import generate_diff
-from gendiff.formatters.stylish import stylish
-from gendiff.formatters.plain import plain
 
 
 def main():

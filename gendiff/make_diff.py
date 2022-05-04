@@ -1,6 +1,6 @@
 def get_diff(file1, file2):
     diff = {}
-    current_keys = file1.keys() | file2.keys()
+    current_keys = sorted(file1.keys() | file2.keys())
     for key in current_keys:
         if key not in file2.keys():
             diff[key] = ("removed", file1[key])

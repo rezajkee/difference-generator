@@ -11,7 +11,7 @@ def collect(source, depth=1, indent_count=2):
     current_indent = INDENT * indent_count
     deep_indent = current_indent * depth
 
-    for key, (type, *values) in sorted(source.items()):
+    for key, (type, *values) in source.items():
 
         def add_indent(attach_type, node):
             result.append(
