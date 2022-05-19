@@ -1,47 +1,48 @@
-def plain(source, path=[], depth=1, first_lvl_keys=None):
-    if not first_lvl_keys:
-        first_lvl_keys = list(source.keys())
+def plain(source, path=[], depth=1):
     result = []
 
-    for key, (type, *values) in source.items():
-        path.append(key)
-        if type == "nested":
-            result.append(plain(values[0], path, depth + 1, first_lvl_keys))
-            if key in first_lvl_keys and depth == 1:
-                path.clear()
-            else:
-                del path[-1::depth]
+    if source["type"] == "root":
+        for item in source["children"]:
+            result.append(plain(item))
 
-        elif type == "added":
-            result.append(
-                "Property '{}' was added with value: {}".format(
-                    ".".join(path), format_value(values[0])
-                )
+    elif source["type"] == "nested":
+        path.append(source["key"])
+        for item in source["children"]:
+            result.append(plain(item, path, depth + 1))
+        del path[-1::depth]
+
+    elif source["type"] == "added":
+        path.append(source["key"])
+        result.append(
+            "Property '{}' was added with value: {}".format(
+                ".".join(path), format_value(source["value"])
             )
-            del path[-1::depth]
+        )
+        del path[-1::depth]
 
-        elif type == "removed":
-            result.append("Property '{}' was removed".format(".".join(path)))
-            del path[-1::depth]
+    elif source["type"] == "removed":
+        path.append(source["key"])
+        result.append("Property '{}' was removed".format(".".join(path)))
+        del path[-1::depth]
 
-        elif type == "modified":
-            result.append(
-                "Property '{}' was updated. From {} to {}".format(
-                    ".".join(path),
-                    format_value(values[0]),
-                    format_value(values[1]),
-                )
+    elif source["type"] == "modified":
+        path.append(source["key"])
+        result.append(
+            "Property '{}' was updated. From {} to {}".format(
+                ".".join(path),
+                format_value(source["value1"]),
+                format_value(source["value2"]),
             )
-            del path[-1::depth]
-        else:
-            del path[-1::depth]
+        )
+        del path[-1::depth]
 
+    result = filter(bool, result)
     return "\n".join(result)
 
 
 def format_value(value):
     if isinstance(value, bool):
-        return str(value).lower()
+        return "true" if value else "false"
 
     if value is None:
         return "null"
@@ -52,4 +53,4 @@ def format_value(value):
     if value == 0:
         return "0"
 
-    return "'{}'".format(value)
+    return "'{}'".format(value)  # for other data types

@@ -6,38 +6,43 @@ attach = {
 }
 
 
-def collect(source, depth=1, indent_count=2):
+def stylish(source, depth=1, indent_count=2):
     result = []
     current_indent = INDENT * indent_count
     deep_indent = current_indent * depth
 
-    for key, (type, *values) in source.items():
-
-        def add_indent(attach_type, node):
-            result.append(
-                "{}{}{}{}: {}".format(
-                    deep_indent, attach[attach_type], INDENT, key, node
-                )
+    def add_indent(attach_type, node):
+        result.append(
+            "{}{}{}{}: {}".format(
+                deep_indent, attach[attach_type], INDENT, source["key"], node
             )
+        )
 
-        if type == "nested":
-            add_indent("same", "{")
-            result.append(collect(values[0], depth + 2))
-            result.append("{}}}".format(current_indent + deep_indent))
+    if source["type"] == "root":
+        result.append("{")
+        for item in source["children"]:
+            result.append(stylish(item))
+        result.append("}")
 
-        elif type == "modified":
-            add_indent("removed", stringify(values[0], depth + 1))
-            add_indent("added", stringify(values[1], depth + 1))
+    elif source["type"] == "nested":
+        add_indent("same", "{")
+        for item in source["children"]:
+            result.append(stylish(item, depth + 2))
+        result.append("{}}}".format(current_indent + deep_indent))
 
-        else:
-            add_indent(type, stringify(values[0], depth + 1))
+    elif source["type"] == "modified":
+        add_indent("removed", stringify(source["value1"], depth + 1))
+        add_indent("added", stringify(source["value2"], depth + 1))
+
+    else:
+        add_indent(source["type"], stringify(source["value"], depth + 1))
 
     return "\n".join(result)
 
 
 def stringify(value, depth=1, indent_count=2):
     if isinstance(value, bool):
-        return str(value).lower()
+        return 'true' if value else 'false'
     if value is None:
         return "null"
     if isinstance(value, dict):
@@ -52,7 +57,3 @@ def stringify(value, depth=1, indent_count=2):
             ))
         return '\n'.join(result)
     return value
-
-
-def stylish(source):
-    return "{{\n{}\n}}".format(collect(source))
