@@ -1,59 +1,65 @@
-INDENT = " "
-attach = {
-    "added": "+",
-    "removed": "-",
-    "same": INDENT,
-}
-
-
-def stylish(source, depth=1, indent_count=2):
-    result = []
-    current_indent = INDENT * indent_count
-    deep_indent = current_indent * depth
-
-    def add_indent(attach_type, node):
-        result.append(
-            "{}{}{}{}: {}".format(
-                deep_indent, attach[attach_type], INDENT, source["key"], node
-            )
-        )
+def stylish(source, depth=1):
+    children = source.get("children")
+    indent = build_indent(depth)
+    formatted_value = stringify(source.get("value"), depth)
+    formatted_value1 = stringify(source.get("value1"), depth)
+    formatted_value2 = stringify(source.get("value2"), depth)
 
     if source["type"] == "root":
-        result.append("{")
-        for item in source["children"]:
-            result.append(stylish(item))
-        result.append("}")
+        lines = map(stylish, children)
+        result = "\n".join(lines)
+        return "{{\n{}\n}}".format(result)
 
-    elif source["type"] == "nested":
-        add_indent("same", "{")
-        for item in source["children"]:
-            result.append(stylish(item, depth + 2))
-        result.append("{}}}".format(current_indent + deep_indent))
+    if source["type"] == "nested":
+        lines = map(lambda child: stylish(child, depth + 1), children)
+        result = "\n".join(lines)
+        return "{0}  {1}: {{\n{2}\n{3}  }}".format(
+            indent,
+            source["key"],
+            result,
+            indent
+        )
 
-    elif source["type"] == "modified":
-        add_indent("removed", stringify(source["value1"], depth + 1))
-        add_indent("added", stringify(source["value2"], depth + 1))
+    if source["type"] == "added":
+        return "{0}+ {1}: {2}".format(indent, source["key"], formatted_value)
 
-    else:
-        add_indent(source["type"], stringify(source["value"], depth + 1))
+    if source["type"] == "removed":
+        return "{0}- {1}: {2}".format(indent, source["key"], formatted_value)
 
-    return "\n".join(result)
+    if source["type"] == "same":
+        return "{0}  {1}: {2}".format(indent, source["key"], formatted_value)
+
+    if source["type"] == "modified":
+        old_val = "{0}- {1}: {2}".format(
+            indent,
+            source["key"],
+            formatted_value1
+        )
+        new_val = "{0}+ {1}: {2}".format(
+            indent,
+            source["key"],
+            formatted_value2
+        )
+        return "{0}\n{1}".format(old_val, new_val)
 
 
-def stringify(value, depth=1, indent_count=2):
+def build_indent(depth):
+    return ' ' * (depth * 4 - 2)
+
+
+def stringify(value, depth=1):
     if isinstance(value, bool):
         return 'true' if value else 'false'
     if value is None:
         return "null"
     if isinstance(value, dict):
         result = ['{',
-                  '{0}{1}'.format(INDENT * indent_count * depth, '}')]
+                  '{0}  {1}'.format(build_indent(depth), '}')]
 
         for key, val in value.items():
-            indent_in_depth = INDENT * indent_count * (depth + 2)
-            key_with_indent = indent_in_depth + str(key)
-            result.insert(-1, '{0}: {1}'.format(
-                key_with_indent, stringify(val, depth + 2)
+            indent = build_indent(depth + 1)
+            result.insert(-1, '{0}  {1}: {2}'.format(
+                indent, key, stringify(val, depth + 1)
             ))
         return '\n'.join(result)
     return value
