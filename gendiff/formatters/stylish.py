@@ -1,3 +1,10 @@
+INDENTS = {
+    "same": "  ",
+    "added": "+ ",
+    "removed": "- "
+}
+
+
 def stylish(source, depth=1):
     children = source.get("children")
     indent = build_indent(depth)
@@ -20,15 +27,6 @@ def stylish(source, depth=1):
             indent
         )
 
-    if source["type"] == "added":
-        return "{0}+ {1}: {2}".format(indent, source["key"], formatted_value)
-
-    if source["type"] == "removed":
-        return "{0}- {1}: {2}".format(indent, source["key"], formatted_value)
-
-    if source["type"] == "same":
-        return "{0}  {1}: {2}".format(indent, source["key"], formatted_value)
-
     if source["type"] == "modified":
         old_val = "{0}- {1}: {2}".format(
             indent,
@@ -41,6 +39,12 @@ def stylish(source, depth=1):
             formatted_value2
         )
         return "{0}\n{1}".format(old_val, new_val)
+
+    if source["type"] in INDENTS:
+        type_of_indent = INDENTS[source["type"]]
+        return "{0}{1}{2}: {3}".format(
+            indent, type_of_indent, source["key"], formatted_value
+        )
 
 
 def build_indent(depth):
