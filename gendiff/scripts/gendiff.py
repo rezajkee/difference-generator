@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 
 from gendiff.gendiff import generate_diff
-from gendiff.cli import parse_args, print_to_console
+from gendiff.cli import parse_args
 
 
 def main():
-    print_to_console(
+    args = parse_args()
+    print(
         generate_diff(
-            parse_args().first_file,
-            parse_args().second_file,
-            parse_args().format,
+            args.first_file,
+            args.second_file,
+            args.format,
         )
     )
 

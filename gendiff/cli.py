@@ -12,7 +12,3 @@ def parse_args():
     parser.add_argument('first_file', type=str)
     parser.add_argument('second_file', type=str)
     return parser.parse_args()
-
-
-def print_to_console(func):
-    print(func)
