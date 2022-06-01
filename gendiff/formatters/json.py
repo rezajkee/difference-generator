@@ -1,5 +1,5 @@
 import json
 
 
-def jsonf(source):
-    return json.dumps(source)
+def render_json(tree):
+    return json.dumps(tree)

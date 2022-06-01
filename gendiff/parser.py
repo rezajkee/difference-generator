@@ -4,12 +4,6 @@ import json
 import yaml
 
 
-def get_parsed_data(path):
-    data = open(path)
-    format_name = path.split(".")[-1]
-    return parse(data, format_name)
-
-
 def parse(data, format_name):
     if format_name in ["json", "JSON"]:
         return json.load(data)

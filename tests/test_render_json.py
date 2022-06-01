@@ -1,7 +1,7 @@
 import pytest
 from gendiff import generate_diff
 
-FORMATTER = 'json'
+FIXTURE_NAME = 'json'
 
 
 @pytest.mark.asyncio

@@ -1,13 +1,13 @@
-from gendiff.formatters.stylish import stylish
-from gendiff.formatters.plain import plain
-from gendiff.formatters.json import jsonf
+from gendiff.formatters.stylish import render_stylish
+from gendiff.formatters.plain import render_plain
+from gendiff.formatters.json import render_json
 
 
 def format(format_name, tree):
     formatters = {
-        "stylish": stylish,
-        "plain": plain,
-        "json": jsonf,
+        "stylish": render_stylish,
+        "plain": render_plain,
+        "json": render_json,
     }
     if format_name in formatters:
         return formatters[format_name](tree)

@@ -1,7 +1,7 @@
 import pytest
 from gendiff import generate_diff
 
-FORMATTER = 'plain'
+FIXTURE_NAME = 'plain'
 
 
 @pytest.mark.asyncio

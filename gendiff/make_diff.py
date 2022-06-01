@@ -30,7 +30,7 @@ def collect(file1, file2):
             diff.append(
                 {
                     "key": key,
-                    "type": "same",
+                    "type": "unmodified",
                     "value": file1[key],
                 }
             )

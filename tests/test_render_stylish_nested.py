@@ -1,7 +1,7 @@
 import pytest
 from gendiff import generate_diff
 
-FORMATTER = 'stylish_nested'
+FIXTURE_NAME = 'stylish_nested'
 
 
 @pytest.mark.asyncio
