@@ -12,39 +12,26 @@ def iter_(tree, depth=1):
     if tree["type"] == "root":
         lines = map(iter_, children)
         result = "\n".join(lines)
-        return "{{\n{}\n}}".format(result)
+        return f"{{\n{result}\n}}"
 
     if tree["type"] == "nested":
         lines = map(lambda child: iter_(child, depth + 1), children)
         result = "\n".join(lines)
-        return "{0}  {1}: {{\n{2}\n{3}  }}".format(
-            indent,
-            tree["key"],
-            result,
-            indent
-        )
+        return f"{indent}  {tree['key']}: {{\n{result}\n{indent}  }}"
 
     if tree["type"] == "modified":
-        old_val = "{0}- {1}: {2}".format(
-            indent,
-            tree["key"],
-            formatted_value1
-        )
-        new_val = "{0}+ {1}: {2}".format(
-            indent,
-            tree["key"],
-            formatted_value2
-        )
-        return "{0}\n{1}".format(old_val, new_val)
+        old_val = f"{indent}- {tree['key']}: {formatted_value1}"
+        new_val = f"{indent}+ {tree['key']}: {formatted_value2}"
+        return f"{old_val}\n{new_val}"
 
     if tree["type"] == "added":
-        return "{0}+ {1}: {2}".format(indent, tree["key"], formatted_value)
+        return f"{indent}+ {tree['key']}: {formatted_value}"
 
     if tree["type"] == "removed":
-        return "{0}- {1}: {2}".format(indent, tree["key"], formatted_value)
+        return f"{indent}- {tree['key']}: {formatted_value}"
 
     if tree["type"] == "unmodified":
-        return "{0}  {1}: {2}".format(indent, tree["key"], formatted_value)
+        return f"{indent}  {tree['key']}: {formatted_value}"
 
 
 def build_indent(depth):
@@ -57,13 +44,11 @@ def stringify(value, depth=1):
     if value is None:
         return "null"
     if isinstance(value, dict):
-        result = ['{',
-                  '{0}  {1}'.format(build_indent(depth), '}')]
-
-        for key, val in value.items():
+        parts = []
+        for key in value:
             indent = build_indent(depth + 1)
-            result.insert(-1, '{0}  {1}: {2}'.format(
-                indent, key, stringify(val, depth + 1)
-            ))
-        return '\n'.join(result)
+            formatted_value = stringify(value[key], depth + 1)
+            parts.append(f"{indent}  {key}: {formatted_value}")
+        output = '\n'.join(parts)
+        return f"{{\n{output}\n{build_indent(depth)}  }}"
     return value

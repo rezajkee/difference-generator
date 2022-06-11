@@ -12,7 +12,5 @@ def format(format_name, tree):
     if format_name in formatters:
         return formatters[format_name](tree)
     raise ValueError(
-        '"{}" format not found. Try "stylish", "plain" or "json".'.format(
-            format_name
-        )
+        f'"{format_name}" format not found. Try "stylish", "plain" or "json".'
     )

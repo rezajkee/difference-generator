@@ -7,30 +7,26 @@ def iter_(tree, path="", depth=1):
     formatted_value = format_value(tree.get("value"))
     formatted_value1 = format_value(tree.get("value1"))
     formatted_value2 = format_value(tree.get("value2"))
+    property_path = f"{path}{tree.get('key')}"
 
     if tree["type"] == "root":
         lines = map(iter_, children)
         lines = filter(None, lines)
         return "\n".join(lines)
     if tree["type"] == "nested":
-        nested_path = build_path(tree, path)
         lines = map(
-            lambda child: iter_(child, nested_path, depth + 1), children
+            lambda child: iter_(child, f"{property_path}.", depth + 1), children
         )
         lines = filter(None, lines)
         return "\n".join(lines)
     if tree["type"] == "added":
-        return "Property '{0}' was added with value: {1}".format(
-            build_path(tree, path), formatted_value
-        )
+        return (f"Property '{property_path}' was added "
+                f"with value: {formatted_value}")
     if tree["type"] == "removed":
-        return "Property '{}' was removed".format(build_path(tree, path))
+        return f"Property '{property_path}' was removed"
     if tree["type"] == "modified":
-        return "Property '{0}' was updated. From {1} to {2}".format(
-            build_path(tree, path),
-            formatted_value1,
-            formatted_value2,
-        )
+        return (f"Property '{property_path}' was updated. "
+                f"From {formatted_value1} to {formatted_value2}")
 
 
 def format_value(value):
@@ -42,11 +38,4 @@ def format_value(value):
         return "[complex value]"
     if value == 0:
         return "0"
-    return "'{}'".format(value)  # for other data types
-
-
-def build_path(source, path):
-    if path:
-        return ".".join([path, source["key"]])
-    else:
-        return source["key"]
+    return f"'{value}'"  # for other data types

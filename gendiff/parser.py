@@ -7,7 +7,7 @@ import yaml
 def parse(data, format_name):
     if format_name in ["json", "JSON"]:
         return json.load(data)
-    elif format_name in ["yaml", "yml", "YML"]:
+    if format_name in ["yaml", "yml", "YML"]:
         return yaml.safe_load(data)
     raise ValueError(
         """"{}" file format not found.
