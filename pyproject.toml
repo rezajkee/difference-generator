@@ -28,3 +28,4 @@ build-backend = "poetry.core.masonry.api"
 pythonpath = [
   ".",
 ]
+asyncio_mode = "strict"
